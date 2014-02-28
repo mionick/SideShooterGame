@@ -9,6 +9,9 @@ private:
 	int score;
 	int animationRow;
 
+	int weapon;
+	int weaponLevel;
+
 public:
 	SpaceShip();
 	void Destroy();
@@ -30,5 +33,15 @@ public:
 	void LoseLife() { lives--; }
 	void addPoint() { score += 10; }
 
+	int getWeapon() { return weapon; }
+	void setWeapon(int newWeapon) { weapon = newWeapon; }
+
+	int getWeaponLevel() { return weaponLevel; }
+	int setWeaponLevel(int newWL) { weaponLevel = newWL; }
+
+
 	void Collided(int objectID);
+
+	void ChangeWeapon(int newWeapon);
+
 };

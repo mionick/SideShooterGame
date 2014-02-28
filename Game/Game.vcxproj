@@ -71,6 +71,7 @@
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
   </ItemGroup>
   <ItemGroup>

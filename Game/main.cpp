@@ -14,6 +14,7 @@
 #include "SpaceShip.h"
 #include "Explosion.h"
 #include "Background.h"
+#include "PowerUp.h"
 
 bool keys[] = { false, false, false, false, false };
 enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE};
@@ -33,6 +34,8 @@ ALLEGRO_SAMPLE_INSTANCE *songInstance;
 //function pointers
 void __cdecl TakeLife();
 void __cdecl ScorePoint();
+void __cdecl ChangeWeapon(int type);
+
 
 //for gnu compilers it looks like this:
 // void TakeLife() __attribute__((cdecl));
@@ -51,6 +54,9 @@ int main(int argc, char **argv)
 	float gameTime = 0;
 	int frames = 0;
 	int gameFPS = 0;
+
+	int spawnRate = 100;
+	int prevScore = 0;
 
 	//===========================================
 	//PROJECT VARIABLES
@@ -146,6 +152,7 @@ int main(int argc, char **argv)
 
 	songInstance = al_create_sample_instance(song);
 	al_set_sample_instance_playmode(songInstance, ALLEGRO_PLAYMODE_LOOP);
+	al_set_sample_instance_gain(songInstance, 2.0);
 
 	al_attach_sample_instance_to_mixer(songInstance, al_get_default_mixer());
 
@@ -197,9 +204,9 @@ int main(int argc, char **argv)
 					ChangeState(state, PLAYING);
 				else if (state == PLAYING)
 				{
-					Bullet *bullet = new Bullet(ship->getX() + 17, ship->getY(), ScorePoint);
+					Bullet *bullet = new Bullet(ship->getX() + 17, ship->getY(), ScorePoint, ship->getWeapon(), ship->getWeaponLevel());
 					objects.push_back(bullet);
-					al_play_sample(shot, 1, 0, 2, ALLEGRO_PLAYMODE_ONCE, NULL);
+					al_play_sample(shot, 0.7, 0, 2, ALLEGRO_PLAYMODE_ONCE, NULL);
 
 				}
 				else if (state == LOST)
@@ -261,14 +268,21 @@ int main(int argc, char **argv)
 			else
 				ship->ResetAnimation(2);
 
-			if (rand() % 100 == 0)
+			if (spawnRate > 15 && prevScore != ship->GetScore())
+			{
+				spawnRate--;
+				prevScore = ship->GetScore();
+			}
+			if (state == PLAYING)
+			{
+
+			if (rand() % spawnRate == 0)
 			{
 				Comet *comet = new Comet(WIDTH, 30 + rand() % (HEIGHT - 60), cometImage, TakeLife);
 				objects.push_back(comet);
 			}
 
-			if (state == PLAYING)
-			{
+
 				//UPADTES
 				for (iter = objects.begin(); iter != objects.end(); ++iter)
 					(*iter)->Update();
@@ -284,24 +298,50 @@ int main(int argc, char **argv)
 						if (!(*iter2)->Collidable()) continue;
 						if ((*iter)->getID() == (*iter2)->getID()) continue;
 						//collide if collidable and not same type
+						if ((*iter)->getID() == POWERUP && (*iter2)->getID() != PLAYER ||
+							(*iter2)->getID() == POWERUP && (*iter)->getID() != PLAYER)
+							continue;
+						//if a powerup collides with anything but the player, skip
 
 						if ((*iter)->CheckCollisions((*iter2)))
 						{
 							(*iter2)->Collided((*iter)->getID());
 							(*iter)->Collided((*iter2)->getID());
 
-							Explosion *explosion = new Explosion(((*iter)->getX() + (*iter2)->getX()) / 2,
-								((*iter)->getY() + (*iter2)->getY()) / 2, explosionImage);
 
-							objects.push_back(explosion);
-							al_play_sample(boom, 1, 0, 2, ALLEGRO_PLAYMODE_ONCE, NULL);
+							//Explode if neither object was a powerup
+							if ((*iter)->getID() != POWERUP &&
+								(*iter2)->getID() != POWERUP)
+							{
 
+								Explosion *explosion = new Explosion(((*iter)->getX() + (*iter2)->getX()) / 2,
+									((*iter)->getY() + (*iter2)->getY()) / 2, explosionImage);
+
+								objects.push_back(explosion);
+								al_play_sample(boom, 1, 0, 2, ALLEGRO_PLAYMODE_ONCE, NULL);
+
+								if (rand() % 10 == 0)
+								{
+									PowerUp *powerup = new PowerUp(((*iter)->getX() + (*iter2)->getX()) / 2, ((*iter)->getY() + (*iter2)->getY()) / 2, rand() % 2, shipImage, ChangeWeapon);
+									objects.push_back(powerup);
+								}
+							}
+							else if ((*iter)->getID() == POWERUP)
+							{
+							}
+							else if ((*iter2)->getID() == POWERUP)
+							{
+
+							}
 						}
 					}
 				}
 
 				if (ship->GetLives() <= 0)
+				{
 					ChangeState(state, LOST);
+					spawnRate = 100;
+				}
 			}
 			//CULL THE DEAD
 			
@@ -331,7 +371,7 @@ int main(int argc, char **argv)
 				for (iter = objects.begin(); iter != objects.end(); ++iter)
 					(*iter)->Render();
 
-				al_draw_textf(font, al_map_rgb(255, 255, 255), 5, 5, 0, "Lives: %i Score: %i", ship->GetLives(), ship->GetScore());
+				al_draw_textf(font, al_map_rgb(255, 255, 255), 5, 5, 0, "Lives: %i Score: %i SpawnRate: %i", ship->GetLives(), ship->GetScore(), spawnRate);
 
 			}
 			else if (state == LOST)
@@ -404,6 +444,11 @@ void __cdecl ScorePoint()
 {
 	ship->addPoint();
 }
+void __cdecl ChangeWeapon(int type)
+{
+	ship->ChangeWeapon(type);
+}
+
 
 void ChangeState(int &state, int newState)
 {

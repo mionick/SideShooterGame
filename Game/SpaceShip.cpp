@@ -29,6 +29,9 @@ void SpaceShip::Init(ALLEGRO_BITMAP *image)
 
 	if (image != NULL)
 		SpaceShip::image = image;
+
+	weapon = NORMAL;
+	weaponLevel = 1;
 }
 void SpaceShip::Update()
 {
@@ -92,4 +95,21 @@ void SpaceShip::Collided(int objectID)
 {
 	if (objectID == ENEMY)
 		lives--;
+
+	if (objectID == POWERUP)
+	{
+
+	}
+}
+
+void SpaceShip::ChangeWeapon(int newWeapon)
+{
+	if (weapon != newWeapon)
+	{
+		weapon = newWeapon;
+		weaponLevel = 1;
+	}
+	else
+		weaponLevel++;
+
 }
