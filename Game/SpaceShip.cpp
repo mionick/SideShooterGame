@@ -32,6 +32,7 @@ void SpaceShip::Init(ALLEGRO_BITMAP *image)
 
 	weapon = NORMAL;
 	weaponLevel = 1;
+
 }
 void SpaceShip::Update()
 {
@@ -54,6 +55,11 @@ void SpaceShip::Render()
 	int fy = animationRow*frameHeight;
 
 	al_draw_bitmap_region(image, fx, fy, frameWidth, frameHeight, x - frameWidth / 2, y - frameHeight / 2, 0);
+
+	if (!getCollidable())
+		al_draw_filled_circle(x, y, 20, al_map_rgba(0, 0, 255, 100));
+
+
 }
 
 void SpaceShip::MoveUp()
@@ -75,6 +81,12 @@ void SpaceShip::MoveRight()
 {
 	curFrame = 1;
 	dirX = 1;
+}
+
+void SpaceShip::LoseLife()
+{
+	if (getCollidable())
+		lives--;
 }
 
 void SpaceShip::ResetAnimation(int position)
@@ -104,12 +116,21 @@ void SpaceShip::Collided(int objectID)
 
 void SpaceShip::ChangeWeapon(int newWeapon)
 {
-	if (weapon != newWeapon)
+	if (newWeapon != SHIELD && newWeapon != LIFE)
 	{
-		weapon = newWeapon;
-		weaponLevel = 1;
+		if (weapon != newWeapon)
+		{
+			weapon = newWeapon;
+			weaponLevel = 1;
+		}
+		else
+			weaponLevel++;
 	}
-	else
-		weaponLevel++;
-
+	else if (newWeapon == SHIELD)
+	{
+		setCollidable(false);
+		invincibleSince = al_current_time();
+	}
+	else if (newWeapon == LIFE)
+		AddLife();
 }

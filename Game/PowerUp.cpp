@@ -61,7 +61,17 @@ void PowerUp::Render()
 		al_draw_filled_circle(x, y, 7, al_map_rgb(255, 100, 100));
 		al_draw_filled_circle(x, y, 4, al_map_rgb(100, 100, 255));
 	}
+	else if (type == SHIELD)
+	{
+		al_draw_filled_circle(x, y, 7, al_map_rgb(0, 0, 255));
+	}
+	else if (type == LIFE)
+	{
+		al_draw_filled_circle(x, y, 7, al_map_rgb(255, 0, 0));
+		al_draw_line(x, y - 7, x, y + 7, al_map_rgb(255, 255, 255), 3);
+		al_draw_line(x-7, y, x+7, y, al_map_rgb(255, 255, 255), 3);
 
+	}
 }
 
 void PowerUp::Collided(int objectID)

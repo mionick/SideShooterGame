@@ -12,6 +12,7 @@ private:
 	int weapon;
 	int weaponLevel;
 
+	int invincibleSince;
 public:
 	SpaceShip();
 	void Destroy();
@@ -30,7 +31,8 @@ public:
 	int GetLives() { return lives; }
 	int GetScore() { return score; }
 
-	void LoseLife() { lives--; }
+	void LoseLife();
+	void AddLife() { lives++; }
 	void addPoint() { score += 10; }
 
 	int getWeapon() { return weapon; }
@@ -39,6 +41,8 @@ public:
 	int getWeaponLevel() { return weaponLevel; }
 	int setWeaponLevel(int newWL) { weaponLevel = newWL; }
 
+	int getInvincibleSince() { return invincibleSince; }
+	void setInvincibleSince(int time) { invincibleSince = time; }
 
 	void Collided(int objectID);
 

@@ -254,6 +254,9 @@ int main(int argc, char **argv)
 				frames = 0;
 			}
 			//===========
+			//PLAYING
+			if (state == PLAYING)
+			{
 			if (keys[UP])
 				ship->MoveUp();
 			else if (keys[DOWN])
@@ -273,8 +276,12 @@ int main(int argc, char **argv)
 				spawnRate--;
 				prevScore = ship->GetScore();
 			}
-			if (state == PLAYING)
+
+			if (!ship->getCollidable())
 			{
+				if (al_current_time() - ship->getInvincibleSince() >= 5)
+					ship->setCollidable(true);
+			}
 
 			if (rand() % spawnRate == 0)
 			{
@@ -283,7 +290,7 @@ int main(int argc, char **argv)
 			}
 
 
-				//UPADTES
+				//UPDATES
 				for (iter = objects.begin(); iter != objects.end(); ++iter)
 					(*iter)->Update();
 
@@ -322,7 +329,7 @@ int main(int argc, char **argv)
 
 								if (rand() % 10 == 0)
 								{
-									PowerUp *powerup = new PowerUp(((*iter)->getX() + (*iter2)->getX()) / 2, ((*iter)->getY() + (*iter2)->getY()) / 2, rand() % 2, shipImage, ChangeWeapon);
+									PowerUp *powerup = new PowerUp(((*iter)->getX() + (*iter2)->getX()) / 2, ((*iter)->getY() + (*iter2)->getY()) / 2,  3, shipImage, ChangeWeapon);
 									objects.push_back(powerup);
 								}
 							}
