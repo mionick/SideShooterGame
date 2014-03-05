@@ -9,6 +9,7 @@ private:
 	
 	int type;
 	int level;
+	int cyclesLeft;
 
 public:
 	Bullet(float x, float y, void(*ScorePoint)(void), int type = NORMAL, int level = 1);

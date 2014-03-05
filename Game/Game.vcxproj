@@ -67,9 +67,11 @@
   <ItemGroup>
     <ClCompile Include="Background.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="CharEntry.cpp" />
     <ClCompile Include="Comet.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameObject.cpp" />
+    <ClCompile Include="HighscoreSaver.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PowerUp.cpp" />
     <ClCompile Include="SpaceShip.cpp" />
@@ -77,10 +79,12 @@
   <ItemGroup>
     <ClInclude Include="Background.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="CharEntry.h" />
     <ClInclude Include="Comet.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="Explosion.h" />
+    <ClInclude Include="HighscoreSaver.h" />
     <ClInclude Include="PowerUp.h" />
     <ClInclude Include="SpaceShip.h" />
   </ItemGroup>

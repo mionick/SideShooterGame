@@ -6,6 +6,8 @@
 #include <allegro5\allegro_audio.h>
 #include <allegro5\allegro_acodec.h>
 #include <list>
+#include <string>
+#include <iostream>
 
 #include "Globals.h"
 #include "GameObject.h"
@@ -15,6 +17,9 @@
 #include "Explosion.h"
 #include "Background.h"
 #include "PowerUp.h"
+#include "CharEntry.h"
+
+
 
 bool keys[] = { false, false, false, false, false };
 enum KEYS{UP, DOWN, LEFT, RIGHT, SPACE};
@@ -58,10 +63,17 @@ int main(int argc, char **argv)
 	int spawnRate = 100;
 	int prevScore = 0;
 
+	const int textDelay = 2;
+	int currentTry = 0;
+
+
 	//===========================================
 	//PROJECT VARIABLES
 	//===========================================
 	ship = new SpaceShip;
+	CharEntry *menu = new CharEntry;
+
+	ALLEGRO_BITMAP *pauseImage = NULL;
 
 	ALLEGRO_BITMAP *shipImage = NULL;
 	ALLEGRO_BITMAP *cometImage = NULL;
@@ -74,9 +86,14 @@ int main(int argc, char **argv)
 	ALLEGRO_BITMAP *titleImage = NULL;
 	ALLEGRO_BITMAP *loseImage = NULL;
 
+	ALLEGRO_BITMAP *alphabetImage = NULL;
+	ALLEGRO_BITMAP *cursorImage = NULL;
+
 	ALLEGRO_SAMPLE *shot = NULL;
 	ALLEGRO_SAMPLE *boom = NULL;
 	ALLEGRO_SAMPLE *song = NULL;
+
+
 
 
 	//===========================================
@@ -156,6 +173,19 @@ int main(int argc, char **argv)
 
 	al_attach_sample_instance_to_mixer(songInstance, al_get_default_mixer());
 
+	//Initializing textEntry stuff
+	alphabetImage = al_load_bitmap("ALPHABET.bmp");
+	//making the cursor
+	cursorImage = al_create_bitmap(52, 40);
+	al_set_target_bitmap(cursorImage);
+	al_draw_line(0, 0, 0, 20, al_map_rgb(0, 255, 0), 3);
+	al_draw_line(0, 0, 25, 0, al_map_rgb(0, 255, 0), 3);
+	al_draw_line(52, 20, 52, 36, al_map_rgb(0, 255, 0), 3);
+	al_draw_line(25, 36, 52, 36, al_map_rgb(0, 255, 0), 3);
+	al_set_target_backbuffer(display);
+
+	menu->Init(52, 35, alphabetImage, cursorImage);
+
 	ChangeState(state, TITLE);
 
 	srand(time(NULL));
@@ -186,6 +216,10 @@ int main(int argc, char **argv)
 			case ALLEGRO_KEY_ESCAPE:
 				done = true;
 				break;
+			case ALLEGRO_KEY_BACKSPACE:
+				if (state == ENTERNAME)
+					menu->Backspace();
+				break;
 			case ALLEGRO_KEY_UP:
 				keys[UP] = true;
 				break;
@@ -208,6 +242,10 @@ int main(int argc, char **argv)
 					objects.push_back(bullet);
 					al_play_sample(shot, 0.7, 0, 2, ALLEGRO_PLAYMODE_ONCE, NULL);
 
+				}
+				else if (state == ENTERNAME)
+				{
+					menu->Enter();
 				}
 				else if (state == LOST)
 					ChangeState(state, PLAYING);
@@ -327,9 +365,9 @@ int main(int argc, char **argv)
 								objects.push_back(explosion);
 								al_play_sample(boom, 1, 0, 2, ALLEGRO_PLAYMODE_ONCE, NULL);
 
-								if (rand() % 10 == 0)
+								if (rand() % 6 == 0)
 								{
-									PowerUp *powerup = new PowerUp(((*iter)->getX() + (*iter2)->getX()) / 2, ((*iter)->getY() + (*iter2)->getY()) / 2,  3, shipImage, ChangeWeapon);
+									PowerUp *powerup = new PowerUp(((*iter)->getX() + (*iter2)->getX()) / 2, ((*iter)->getY() + (*iter2)->getY()) / 2,  rand() % 5, shipImage, ChangeWeapon);
 									objects.push_back(powerup);
 								}
 							}
@@ -346,9 +384,29 @@ int main(int argc, char **argv)
 
 				if (ship->GetLives() <= 0)
 				{
-					ChangeState(state, LOST);
+					ChangeState(state, ENTERNAME);
 					spawnRate = 100;
 				}
+			}
+			else if (state == ENTERNAME)
+			{
+				if (menu->GetDone())
+					ChangeState(state, LOST);
+				else if (currentTry == textDelay)
+				{
+					if (keys[UP])
+						menu->MoveUp();
+					else if (keys[DOWN])
+						menu->MoveDown();
+					else if (keys[RIGHT])
+						menu->MoveRight();
+					else if (keys[LEFT])
+						menu->MoveLeft();
+
+					currentTry = 0;
+				}
+				else
+					currentTry++;
 			}
 			//CULL THE DEAD
 			
@@ -381,15 +439,23 @@ int main(int argc, char **argv)
 				al_draw_textf(font, al_map_rgb(255, 255, 255), 5, 5, 0, "Lives: %i Score: %i SpawnRate: %i", ship->GetLives(), ship->GetScore(), spawnRate);
 
 			}
+			else if (state == ENTERNAME)
+			{
+				menu->Render(WIDTH / 2, HEIGHT / 2);
+			}
 			else if (state == LOST)
 			{
 				loseScreen->Render();
+			}
+			else if (state == PAUSE)
+			{
+				//al_draw_bitmap(pauseImage, 0, 0, 0);
+				al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
 			}
 			render = false;
 
 			//BEGIN PROJECT RENDER===================
 
-			//al_draw_textf(font, al_map_rgb(255, 255, 255), 5, 5, 0, "FPS: %i Score: %i", gameFPS, ship->GetScore());
 			//FLIP BUFFERS
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -415,6 +481,11 @@ int main(int argc, char **argv)
 	delete titleScreen;
 	delete loseScreen;
 
+	al_destroy_bitmap(cursorImage);
+	al_destroy_bitmap(alphabetImage);
+
+	al_destroy_bitmap(pauseImage);
+
 	al_destroy_bitmap(titleImage);
 	al_destroy_bitmap(loseImage);
 
@@ -433,7 +504,7 @@ int main(int argc, char **argv)
 	al_destroy_sample(song);
 	al_destroy_sample_instance(songInstance);
 
-
+	
 
 	al_destroy_font(font);
 	al_destroy_timer(timer);
@@ -473,9 +544,12 @@ void ChangeState(int &state, int newState)
 		al_stop_sample_instance(songInstance);
 
 	}
-	else if (state =- LOST)
+	else if (state == LOST)
 	{
 
+	}
+	else if (state == PAUSE)
+	{
 	}
 
 	state = newState;
@@ -490,6 +564,10 @@ void ChangeState(int &state, int newState)
 		al_play_sample_instance(songInstance);
 	}
 	else if (state == LOST)
+	{
+
+	}
+	else if (state == PAUSE)
 	{
 
 	}
