@@ -4,7 +4,7 @@
 HighscoreSaver::HighscoreSaver()
 {
 	fstream inputFile;
-	inputFile.open("scores", ios::in);
+	inputFile.open("score", ios::in);
 	
 	string name;
 	int score;
@@ -30,13 +30,21 @@ void HighscoreSaver::CreateNewFile()
 void HighscoreSaver::AddToList(string name, int score)
 {
 	int count = 0;
+
 	while (count < maxNum && score <= HighscoreSaver::score[count])
 		count++;
-	if (count < maxNum)
+	//our score should go in score[count]
+	//shift all from count downward by one.
+	if (count != maxNum)
 	{
+		for (int i = maxNum - 1; i>count; i--)
+		{
+			HighscoreSaver::name[i] = HighscoreSaver::name[i - 1];
+			HighscoreSaver::score[i] = HighscoreSaver::score[i - 1];
+
+		}
 		HighscoreSaver::name[count] = name;
 		HighscoreSaver::score[count] = score;
-
 	}
 	if (numOfEntries != maxNum)
 		numOfEntries++;
@@ -58,6 +66,13 @@ void HighscoreSaver::SaveList()
 void HighscoreSaver::Render(int X, int Y, ALLEGRO_FONT *font)
 {
 
+	al_draw_text(font, al_map_rgb(255, 255, 255), X, Y, 0, "HIGHSCORES:");
+	string temp;
 	for (int i = 0; i < numOfEntries; i++)
-		al_draw_textf(font, al_map_rgb(255, 255, 255), X, Y + 35*i, 0, HighscoreSaver::name[i].c_str() + ' %i', HighscoreSaver::score[i]);
+	{
+		temp = HighscoreSaver::name[i];
+		al_draw_text(font, al_map_rgb(255, 255, 255), X, Y + 35*i + 40, 0, temp.c_str());
+		al_draw_textf(font, al_map_rgb(255, 255, 255), X + 100, Y + 35 * i + 40, 0,"             %i", HighscoreSaver::score[i]);
+
+	}
 }

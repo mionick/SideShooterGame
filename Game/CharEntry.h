@@ -27,6 +27,7 @@ public:
 	void Enter();
 	void Backspace();
 	void Done();
+	void Reset();
 
 	bool GetDone() { return done; }
 	string GetName();

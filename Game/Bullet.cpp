@@ -11,8 +11,8 @@ Bullet::Bullet(float x, float y, void(*ScorePoint)(void), int type, int level)
 	}
 	else if (type == BARRIER)
 	{
-		GameObject::Init(x, y, 12, 0, 1, 0, 0, 25);
-		cyclesLeft = 5+ 15 * level;
+		GameObject::Init(x, y, 14, 0, 1, 0, 0, 25);
+		cyclesLeft = 10+ 15 * level;
 
 	}
 	setID(BULLET);

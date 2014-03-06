@@ -96,9 +96,15 @@ string CharEntry::GetName()
 		if (chars[i] < 26)
 			name.append(1, static_cast<char>(chars[i] + 65));
 		else
-			name.append(1, static_cast<char>(chars[i] + 48));
+			name.append(1, static_cast<char>(chars[i] + 22));
 	}
-	name.append(maxSize, '-');
+	name.append(maxSize - currentSize, '-');
 
 	return name;
+}
+void CharEntry::Reset()
+{
+	done = false;
+	name = "";
+	currentSize = 0;
 }

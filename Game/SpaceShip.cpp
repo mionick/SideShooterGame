@@ -110,7 +110,7 @@ void SpaceShip::Collided(int objectID)
 
 	if (objectID == POWERUP)
 	{
-
+		score += 21;
 	}
 }
 

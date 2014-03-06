@@ -18,6 +18,7 @@
 #include "Background.h"
 #include "PowerUp.h"
 #include "CharEntry.h"
+#include "HighscoreSaver.h"
 
 
 
@@ -72,6 +73,8 @@ int main(int argc, char **argv)
 	//===========================================
 	ship = new SpaceShip;
 	CharEntry *menu = new CharEntry;
+	HighscoreSaver *scoreSaver = new HighscoreSaver;
+	string playerName;
 
 	ALLEGRO_BITMAP *pauseImage = NULL;
 
@@ -103,6 +106,7 @@ int main(int argc, char **argv)
 	ALLEGRO_EVENT_QUEUE *queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
 	ALLEGRO_FONT *font = NULL;
+	ALLEGRO_FONT *font2 = NULL;
 
 	//===========================================
 	//ALLEGRO INIT FUNCTIONS
@@ -131,6 +135,7 @@ int main(int argc, char **argv)
 	//PROJECT INIT
 	//===========================================
 	font = al_load_font("ARDELANEY.ttf", 18, 0);
+	font2 = al_load_font("ARDELANEY.ttf", 36, 0);
 	al_reserve_samples(15);
 
 	shipImage = al_load_bitmap("ship.png");
@@ -247,6 +252,8 @@ int main(int argc, char **argv)
 				{
 					menu->Enter();
 				}
+				else if (state == HIGHSCORE)
+					ChangeState(state, LOST);
 				else if (state == LOST)
 					ChangeState(state, PLAYING);
 				break;
@@ -391,7 +398,12 @@ int main(int argc, char **argv)
 			else if (state == ENTERNAME)
 			{
 				if (menu->GetDone())
-					ChangeState(state, LOST);
+				{
+					playerName = menu->GetName();
+					scoreSaver->AddToList(playerName, ship->GetScore());
+					menu->Reset();
+					ChangeState(state, HIGHSCORE);
+				}
 				else if (currentTry == textDelay)
 				{
 					if (keys[UP])
@@ -443,6 +455,10 @@ int main(int argc, char **argv)
 			{
 				menu->Render(WIDTH / 2, HEIGHT / 2);
 			}
+			else if (state == HIGHSCORE)
+			{
+				scoreSaver->Render(10, 10, font2);
+			}
 			else if (state == LOST)
 			{
 				loseScreen->Render();
@@ -453,8 +469,6 @@ int main(int argc, char **argv)
 				al_draw_text(font, al_map_rgb(255, 255, 255), WIDTH / 2, HEIGHT / 2, ALLEGRO_ALIGN_CENTER, "PAUSED");
 			}
 			render = false;
-
-			//BEGIN PROJECT RENDER===================
 
 			//FLIP BUFFERS
 			al_flip_display();
