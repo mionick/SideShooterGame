@@ -107,4 +107,5 @@ void CharEntry::Reset()
 	done = false;
 	name = "";
 	currentSize = 0;
+	cursorPosition = 0;
 }

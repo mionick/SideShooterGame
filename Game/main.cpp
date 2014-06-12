@@ -64,8 +64,8 @@ int main(int argc, char **argv)
 	int spawnRate = 100;
 	int prevScore = 0;
 
-	const int textDelay = 2;
-	int currentTry = 0;
+	const int textDelay = 7;
+	int currentTry = textDelay-1;
 
 
 	//===========================================
@@ -170,7 +170,9 @@ int main(int argc, char **argv)
 
 	shot = al_load_sample("shot.wav");
 	boom = al_load_sample("boom.wav");
-	song = al_load_sample("Another Winter -Anamanaguchi.wav");
+	song = al_load_sample("nappa.wav");
+
+	//song = al_load_sample("Another Winter -Anamanaguchi.wav");
 
 	songInstance = al_create_sample_instance(song);
 	al_set_sample_instance_playmode(songInstance, ALLEGRO_PLAYMODE_LOOP);
@@ -253,7 +255,10 @@ int main(int argc, char **argv)
 					menu->Enter();
 				}
 				else if (state == HIGHSCORE)
+				{
+					scoreSaver->Reset();
 					ChangeState(state, LOST);
+				}
 				else if (state == LOST)
 					ChangeState(state, PLAYING);
 				break;
@@ -261,6 +266,8 @@ int main(int argc, char **argv)
 		}
 		else if (ev.type == ALLEGRO_EVENT_KEY_UP)
 		{
+			if (state == ENTERNAME)
+				currentTry = textDelay - 1;
 			switch (ev.keyboard.keycode)
 			{
 			case ALLEGRO_KEY_ESCAPE:
@@ -354,6 +361,10 @@ int main(int argc, char **argv)
 							(*iter2)->getID() == POWERUP && (*iter)->getID() != PLAYER)
 							continue;
 						//if a powerup collides with anything but the player, skip
+						if ((*iter)->getID() == BULLET && (*iter2)->getID() == PLAYER ||
+							(*iter2)->getID() == BULLET && (*iter)->getID() == PLAYER)
+							continue;
+						//if player and BULLET collide, skip
 
 						if ((*iter)->CheckCollisions((*iter2)))
 						{
@@ -374,7 +385,7 @@ int main(int argc, char **argv)
 
 								if (rand() % 6 == 0)
 								{
-									PowerUp *powerup = new PowerUp(((*iter)->getX() + (*iter2)->getX()) / 2, ((*iter)->getY() + (*iter2)->getY()) / 2,  rand() % 5, shipImage, ChangeWeapon);
+									PowerUp *powerup = new PowerUp(((*iter)->getX() + (*iter2)->getX()) / 2, ((*iter)->getY() + (*iter2)->getY()) / 2, rand() % 4, shipImage, ChangeWeapon);
 									objects.push_back(powerup);
 								}
 							}
@@ -391,7 +402,10 @@ int main(int argc, char **argv)
 
 				if (ship->GetLives() <= 0)
 				{
-					ChangeState(state, ENTERNAME);
+					if (ship->GetScore() > scoreSaver->GetLowest())
+						ChangeState(state, ENTERNAME);
+					else
+						ChangeState(state, HIGHSCORE);
 					spawnRate = 100;
 				}
 			}
@@ -404,21 +418,51 @@ int main(int argc, char **argv)
 					menu->Reset();
 					ChangeState(state, HIGHSCORE);
 				}
-				else if (currentTry == textDelay)
+				else if (keys[UP])
 				{
-					if (keys[UP])
+					if (currentTry == textDelay)
+					{
 						menu->MoveUp();
-					else if (keys[DOWN])
-						menu->MoveDown();
-					else if (keys[RIGHT])
-						menu->MoveRight();
-					else if (keys[LEFT])
-						menu->MoveLeft();
+						currentTry = 0;
+					}
+					else
+						currentTry++;
 
-					currentTry = 0;
 				}
-				else
-					currentTry++;
+				else if (keys[DOWN])
+				{
+					if (currentTry == textDelay)
+					{
+					menu->MoveDown();
+					currentTry = 0;
+					}
+					else
+						currentTry++;
+
+				}
+				else if (keys[RIGHT])
+				{
+					if (currentTry == textDelay)
+					{
+					menu->MoveRight();
+					currentTry = 0;
+					}
+					else
+						currentTry++;
+
+				}
+				else if (keys[LEFT])
+				{
+					if (currentTry == textDelay)
+					{
+					menu->MoveLeft();
+					currentTry = 0;
+					}
+					else
+						currentTry++;
+
+				}
+
 			}
 			//CULL THE DEAD
 			

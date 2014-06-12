@@ -24,10 +24,18 @@ public:
 
 	void Render(int X, int Y, ALLEGRO_FONT *font);
 
+	int GetLowest() { return lowest; }
+
+	void Reset();
+
 private:
 	string name[maxNum];
 	int score[maxNum];
 	int numOfEntries;
+
+	int lowest;
+
+	int newEntry;
 
 
 

@@ -11,7 +11,7 @@ Bullet::Bullet(float x, float y, void(*ScorePoint)(void), int type, int level)
 	}
 	else if (type == BARRIER)
 	{
-		GameObject::Init(x, y, 14, 0, 1, 0, 0, 25);
+		GameObject::Init(x, y, 16, 0, 1, 0, 0, 45);
 		cyclesLeft = 10+ 15 * level;
 
 	}
@@ -74,13 +74,14 @@ void Bullet::Collided(int ObjectID)
 			level--;
 		if (type == WIDE || level == 0)
 			setAlive(false);
-		if (type == BARRIER)
+		if (type == BARRIER && ObjectID == ENEMY)
 		{
-
+			ScorePoint();
 		}
 
 	}
 
 	if (ObjectID == ENEMY)
 		ScorePoint();
+
 }

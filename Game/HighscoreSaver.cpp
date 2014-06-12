@@ -20,13 +20,11 @@ HighscoreSaver::HighscoreSaver()
 	inputFile.close();
 	
 	numOfEntries = count;
+	lowest = HighscoreSaver::score[count-1];
 }
 HighscoreSaver::~HighscoreSaver(){}
 
-void HighscoreSaver::CreateNewFile()
-{
 
-}
 void HighscoreSaver::AddToList(string name, int score)
 {
 	int count = 0;
@@ -48,6 +46,9 @@ void HighscoreSaver::AddToList(string name, int score)
 	}
 	if (numOfEntries != maxNum)
 		numOfEntries++;
+
+	newEntry = count;
+	lowest = HighscoreSaver::score[maxNum - 1];
 	SaveList();
 }
 void HighscoreSaver::SaveList()
@@ -66,13 +67,24 @@ void HighscoreSaver::SaveList()
 void HighscoreSaver::Render(int X, int Y, ALLEGRO_FONT *font)
 {
 
-	al_draw_text(font, al_map_rgb(255, 255, 255), X, Y, 0, "HIGHSCORES:");
+	ALLEGRO_COLOR color = al_map_rgb(255, 255, 255);
+	al_draw_text(font, color, X, Y, 0, "HIGHSCORES:");
 	string temp;
 	for (int i = 0; i < numOfEntries; i++)
 	{
 		temp = HighscoreSaver::name[i];
-		al_draw_text(font, al_map_rgb(255, 255, 255), X, Y + 35*i + 40, 0, temp.c_str());
-		al_draw_textf(font, al_map_rgb(255, 255, 255), X + 100, Y + 35 * i + 40, 0,"             %i", HighscoreSaver::score[i]);
+		if (i == newEntry)
+			color = al_map_rgb(0, 255, 0);
+		else
+			color = al_map_rgb(255, 255, 255);
+
+		al_draw_text(font, color, X, Y + 35*i + 40, 0, temp.c_str());
+		al_draw_textf(font, color, X + 100, Y + 35 * i + 40, 0,"             %i", HighscoreSaver::score[i]);
 
 	}
+}
+
+void HighscoreSaver::Reset()
+{
+	newEntry = maxNum;
 }
