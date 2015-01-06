@@ -5,16 +5,6 @@ First repository, first c++ program, first game in allegro5, first time with vis
 
 This started out as a lot of firsts, trying to get some practical experience programming things, since it's not really necessary for the courses I take. 
 
-To Run/play:
-------------
-Since I built the game on allegro5 gaming library, it requires the successful install of the allegro5 components, which is not that bad! Download from the website and move them to a place where your compiler can see them I think? I used visual studio and copy+pasted the files into the appropraite folders in "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC"
-
-That is probably not the best way to install since, I cannot easily remove the allegro files, but it works and should be harmeless. 
-
-After that the only special tweaking I did is to include allegro-5.0.10-monolith-md-debug.lib in 
-visual studio-> project properies -> Configuration -> Linker -> Input -> Additional dependancies
-
-Probably not the same as any other version of visual studio, but if youa re using 2013 that will do it.
 
 About the Game:
 ---------------
@@ -31,7 +21,7 @@ Space does just about everything in the game.
 Things learned so far:
 ----------------------
 
-All c++ syntax that is use din the files. 
+All c++ syntax that is used in the files. 
 The seperation of header files for declaration and cpp files for definitions.
 The components of a game loop. (input, update, render)
 The idea of game states, and implementing them with a FSM.
@@ -48,7 +38,7 @@ Difference between references and pointers.
 One More Thing:
 ---------------
 
-The basic game was built jsut about entirely from these tutorials:
+The basic game was built just about entirely from these tutorials:
 http://fixbyproximity.com/2d-game-development-course/
 
 They were great for starting out. Much has been added by me since then though. 
