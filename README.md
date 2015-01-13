@@ -1,6 +1,8 @@
 SideShooterGame
 ===============
 
+Youtube Video here: https://www.youtube.com/watch?v=rEkMhYiMqnY
+
 First repository, first c++ program, first game in allegro5, first time with visual studio. 
 
 This started out as a lot of firsts, trying to get some practical experience programming things, since it's not really necessary for the courses I take. 
