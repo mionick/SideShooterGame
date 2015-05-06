@@ -1,6 +1,8 @@
 SideShooterGame
 ===============
 
+![Screenshot of Gameplay](https://www.dropbox.com/s/44er7pmdujb9ace/spaceshooter.png?raw=1)
+
 First repository, first c++ program, first game in allegro5, first time with visual studio. 
 
 This started out as a lot of firsts, trying to get some practical experience programming things, since it's not really necessary for the courses I take. 

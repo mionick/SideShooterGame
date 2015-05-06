@@ -170,9 +170,9 @@ int main(int argc, char **argv)
 
 	shot = al_load_sample("shot.wav");
 	boom = al_load_sample("boom.wav");
-	song = al_load_sample("nappa.wav");
+	//song = al_load_sample("nappa.wav");
 
-	//song = al_load_sample("Another Winter -Anamanaguchi.wav");
+	song = al_load_sample("Another Winter -Anamanaguchi.wav");
 
 	songInstance = al_create_sample_instance(song);
 	al_set_sample_instance_playmode(songInstance, ALLEGRO_PLAYMODE_LOOP);
