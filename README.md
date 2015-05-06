@@ -1,6 +1,8 @@
 SideShooterGame
 ===============
 
+![Screenshot of Gameplay](https://www.dropbox.com/s/44er7pmdujb9ace/spaceshooter.png?raw=1)
+
 Youtube Video here: https://www.youtube.com/watch?v=rEkMhYiMqnY
 
 First repository, first c++ program, first game in allegro5, first time with visual studio. 
